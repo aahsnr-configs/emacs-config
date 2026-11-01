@@ -93,6 +93,23 @@
   "o F"   '(select-frame-by-name :wk "Select frame")
   "o i"   '(ielm :wk "REPL (Elisp)"))
 
+;; AI assistants (SPC o a).  The clients are configured by llm-config,
+;; loaded before this module.  Keep all LLM keybindings here so they do not
+;; conflict with the existing global/local leader trees.
+(ar/global-leader
+  "o a"   '(:ignore t :wk "AI assistants")
+  "o a c" '(codex-ide-menu :wk "Codex IDE menu")
+  "o a C" '(codex-ide :wk "Start Codex session")
+  "o a o" '(agent-shell :wk "OpenCode session")
+  "o a O" '(ar/llm-opencode-new :wk "New OpenCode session")
+  "o a g" '(gptel :wk "ChatGPT chat")
+  "o a s" '(gptel-send :wk "Send prompt/selection")
+  "o a m" '(ar/llm-gptel-menu :wk "ChatGPT options")
+  "o a r" '(ar/llm-gptel-rewrite :wk "Rewrite with ChatGPT")
+  "o a a" '(ar/llm-gptel-add :wk "Add ChatGPT context")
+  "o a l" '(ar/llm-gptel-login :wk "ChatGPT login")
+  "o a ?" '(ar/llm-check-prerequisites :wk "Check LLM tools"))
+
 ;; Global zoom bindings (commands defined in the ui module).
 (general-define-key
  "C-=" #'ar/global-zoom-in

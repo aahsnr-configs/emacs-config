@@ -143,8 +143,17 @@
     magit forge code-review orgit orgit-forge git-link git-modes
     blamer magit-todos dirvish diredfl ibuffer-projectile ibuffer-vc
 
+    ;; llm: Codex IDE, OpenCode ACP, and ChatGPT subscription via gptel.
+    ;; Install explicit Git dependencies before their consumers to avoid
+    ;; straight.el resolving different implicit recipes from MELPA.
+    (shell-maker :host github :repo "xenodium/shell-maker")
+    (acp :host github :repo "xenodium/acp.el")
+    (codex-ide :host github :repo "dgillis/emacs-codex-ide")
+    (agent-shell :host github :repo "xenodium/agent-shell")
+    (gptel :host github :repo "karthink/gptel")
+
     ;; tools: notebooks, evaluation, lookup, LLM, pdf
-    ein quickrun eros dumb-jump request gptel
+    ein quickrun eros dumb-jump request
     ;; git-only gptel companions
     (gptel-quick :host github :repo "karthink/gptel-quick")
     (gptel-magit :host github :repo "ArthurHeymans/gptel-magit")
@@ -219,12 +228,13 @@ resolve them) or explicit straight recipes for git-only packages.")
 
 ;; Module load order is load-bearing: core-config defines the shared
 ;; helpers every later module uses, editor-config defines the
-;; `ar/global-leader' and `ar/local-leader' definers, and keybinds-config
-;; binds commands from all of them -- so this order must not change.
+;; `ar/global-leader' and `ar/local-leader' definers, llm-config defines
+;; the AI commands, and keybinds-config binds commands from all of them --
+;; so this order must not change.
 (defvar ar-modules
   '(core-config editor-config ui-config completion-config org-config
     dev-config tools-config lang-config vc-projects-config
-    keybinds-config)
+    llm-config keybinds-config)
   "Module features this file loads, in this exact order.
 `reload-init-file' re-evaluates these files after startup.")
 
