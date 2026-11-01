@@ -55,7 +55,7 @@
 ;; sessions defer through `lsp-deferred', batch starts `lsp' directly.
 (defcustom ar/lsp-excluded-modes
   '(emacs-lisp-mode lisp-interaction-mode lisp-mode
-    makefile-mode makefile-ts-mode snippet-mode ron-mode)
+                    makefile-mode makefile-ts-mode snippet-mode ron-mode)
   "Major modes in which lsp auto-start is never attempted."
   :type '(repeat symbol)
   :group 'ar)
@@ -88,14 +88,14 @@ the buffer directory as a workspace folder and call `lsp' directly."
 (use-package lsp-mode
   :defer t
   :commands (lsp lsp-deferred
-             lsp-execute-code-action
-             lsp-organize-imports
-             lsp-rename
-             lsp-find-declaration
-             lsp-find-type-definition
-             lsp-find-implementation
-             lsp-inlay-hints-mode
-             lsp-semantic-tokens-mode)
+                 lsp-execute-code-action
+                 lsp-organize-imports
+                 lsp-rename
+                 lsp-find-declaration
+                 lsp-find-type-definition
+                 lsp-find-implementation
+                 lsp-inlay-hints-mode
+                 lsp-semantic-tokens-mode)
   :hook ((prog-mode . ar/lsp-ensure-maybe)
          (lsp-completion-mode . ar/lsp-completion-orderless))
   :preface
@@ -140,6 +140,7 @@ the buffer directory as a workspace folder and call `lsp' directly."
 ;; belong in pyproject.toml ([tool.ruff], [tool.ty]), not here, so every
 ;; editor and CI run agrees.  The `ruff' client needs no setup: its defaults
 ;; (`ruff server', fix-all and organize-imports advertised) are what we want.
+;; TODO: lsp mode already had ty built-in so this unnecessary
 (use-package lsp-python-ty
   :ensure nil
   :after lsp-mode
@@ -164,8 +165,8 @@ the buffer directory as a workspace folder and call `lsp' directly."
   (lsp-ui-peek-list-width 60)
   (lsp-ui-imenu-buffer-position 'right)
   :bind (:map lsp-ui-mode-map
-         ("C-c l d" . lsp-ui-doc-glance)
-         ("C-c l p" . lsp-ui-peek-find-references)))
+              ("C-c l d" . lsp-ui-doc-glance)
+              ("C-c l p" . lsp-ui-peek-find-references)))
 
 ;; emacs-lsp-booster integration.  Fully optional: every effect below is
 ;; gated on the `emacs-lsp-booster' binary.
@@ -180,6 +181,7 @@ the buffer does not start with bytecode."
          (funcall bytecode))))
    (apply old-fn args)))
 
+;; TODO: lsp-booster is redundant as of emacs 30. So remove these
 (defun lsp-booster--advice-final-command (old-fn cmd &optional test?)
   "Prepend emacs-lsp-booster command to lsp CMD.
 OLD-FN is the wrapped `lsp-resolve-final-command'."
@@ -198,7 +200,7 @@ OLD-FN is the wrapped `lsp-resolve-final-command'."
 
 (when (executable-find "emacs-lsp-booster")
   (advice-add (if (progn (require 'json)
-                          (fboundp 'json-parse-buffer))
+                         (fboundp 'json-parse-buffer))
                   'json-parse-buffer
                 'json-read)
               :around
@@ -271,31 +273,31 @@ OLD-FN is the wrapped `lsp-resolve-final-command'."
 ;; evaluation through emacs-jupyter (see tools-config).
 (with-eval-after-load 'python
   (general-define-key
-    :states '(normal insert visual emacs)
-    :keymaps 'python-base-mode-map
-    :prefix "SPC m"
-    :global-prefix "C-SPC m"
-    "f" '(ar/python-ruff-fix-all :wk "Ruff fix all")
-    "i" '(lsp-organize-imports :wk "Organize imports")
-    "r" '(jupyter-run-repl :wk "Run Jupyter REPL")
-    "c" '(jupyter-connect-repl :wk "Connect to kernel")
-    "a" '(jupyter-repl-associate-buffer :wk "Associate with REPL")
-    "z" '(jupyter-repl-pop-to-buffer :wk "Go to REPL")
-    "e" '(jupyter-eval-line-or-region :wk "Eval line/region")
-    "d" '(jupyter-eval-defun :wk "Eval defun")
-    "b" '(jupyter-eval-buffer :wk "Eval buffer")
-    "h" '(jupyter-inspect-at-point :wk "Inspect at point")
-    "o" '(jupyter-eval-remove-overlays :wk "Clear result overlays")
-    "k" '(jupyter-repl-restart-kernel :wk "Restart kernel")
-    "x" '(jupyter-repl-interrupt-kernel :wk "Interrupt kernel")))
+   :states '(normal insert visual emacs)
+   :keymaps 'python-base-mode-map
+   :prefix "SPC m"
+   :global-prefix "C-SPC m"
+   "f" '(ar/python-ruff-fix-all :wk "Ruff fix all")
+   "i" '(lsp-organize-imports :wk "Organize imports")
+   "r" '(jupyter-run-repl :wk "Run Jupyter REPL")
+   "c" '(jupyter-connect-repl :wk "Connect to kernel")
+   "a" '(jupyter-repl-associate-buffer :wk "Associate with REPL")
+   "z" '(jupyter-repl-pop-to-buffer :wk "Go to REPL")
+   "e" '(jupyter-eval-line-or-region :wk "Eval line/region")
+   "d" '(jupyter-eval-defun :wk "Eval defun")
+   "b" '(jupyter-eval-buffer :wk "Eval buffer")
+   "h" '(jupyter-inspect-at-point :wk "Inspect at point")
+   "o" '(jupyter-eval-remove-overlays :wk "Clear result overlays")
+   "k" '(jupyter-repl-restart-kernel :wk "Restart kernel")
+   "x" '(jupyter-repl-interrupt-kernel :wk "Interrupt kernel")))
 
 ;; Debugger: dape (DAP: breakpoints, stepping, REPL, watch).
 (use-package dape
   :defer t
   :commands (dape dape-breakpoint-toggle dape-breakpoint-log dape-breakpoint-expression
-             dape-continue dape-next dape-step-in dape-step-out dape-restart dape-kill
-             dape-pause dape-disconnect dape-evaluate-expression dape-repl dape-info
-             dape-quit)
+                  dape-continue dape-next dape-step-in dape-step-out dape-restart dape-kill
+                  dape-pause dape-disconnect dape-evaluate-expression dape-repl dape-info
+                  dape-quit)
   :custom
   (dape-buffer-window-arrangement 'gud)
   ;; Project root (falling back to default-directory) is the default;

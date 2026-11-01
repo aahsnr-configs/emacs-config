@@ -104,9 +104,9 @@
    '("/COMMIT_EDITMSG\\'" "/git-rebase-todo\\'"))
   (undo-fu-session-incompatible-major-modes
    '(magit-status-mode magit-log-mode magit-diff-mode magit-revision-mode
-     git-commit-mode dired-mode dirvish-mode treemacs-mode eshell-mode
-     term-mode ghostel-mode compilation-mode grep-mode occur-mode
-     org-agenda-mode help-mode helpful-mode Info-mode special-mode))
+                       git-commit-mode dired-mode dirvish-mode treemacs-mode eshell-mode
+                       term-mode ghostel-mode compilation-mode grep-mode occur-mode
+                       org-agenda-mode help-mode helpful-mode Info-mode special-mode))
   :config
   ;; Conditional compression: prefer zstd, fallback to gzip.
   (setq undo-fu-session-compression
@@ -122,6 +122,7 @@
   (setq undo-fu-session-make-file-name-function #'ar/undo-fu-session-hash-path)
   (undo-fu-session-global-mode 1))
 
+;; TODO: Is vundo need if undo-fu and undo-fu-session is setup
 (use-package vundo
   :defer t
   :commands (vundo)
@@ -365,19 +366,19 @@ prose."
   :after evil
   :config
   (with-no-warnings
-  (define-key evil-inner-text-objects-map "f" (evil-textobj-tree-sitter-get-textobj "function.inner"))
-  (define-key evil-outer-text-objects-map "f" (evil-textobj-tree-sitter-get-textobj "function.outer"))
-  (define-key evil-inner-text-objects-map "F" (evil-textobj-tree-sitter-get-textobj "call.inner"))
-  (define-key evil-outer-text-objects-map "F" (evil-textobj-tree-sitter-get-textobj "call.outer"))
-  (define-key evil-inner-text-objects-map "C" (evil-textobj-tree-sitter-get-textobj "class.inner"))
-  (define-key evil-outer-text-objects-map "C" (evil-textobj-tree-sitter-get-textobj "class.outer"))
-  (define-key evil-outer-text-objects-map "c" (evil-textobj-tree-sitter-get-textobj "comment.outer"))
-  (define-key evil-inner-text-objects-map "v" (evil-textobj-tree-sitter-get-textobj "conditional.inner"))
-  (define-key evil-outer-text-objects-map "v" (evil-textobj-tree-sitter-get-textobj "conditional.outer"))
-  (define-key evil-inner-text-objects-map "l" (evil-textobj-tree-sitter-get-textobj "loop.inner"))
-  (define-key evil-outer-text-objects-map "l" (evil-textobj-tree-sitter-get-textobj "loop.outer"))
-  (define-key evil-inner-text-objects-map "a" (evil-textobj-tree-sitter-get-textobj ("parameter.inner" "call.inner")))
-  (define-key evil-outer-text-objects-map "a" (evil-textobj-tree-sitter-get-textobj ("parameter.outer" "call.outer"))))
+    (define-key evil-inner-text-objects-map "f" (evil-textobj-tree-sitter-get-textobj "function.inner"))
+    (define-key evil-outer-text-objects-map "f" (evil-textobj-tree-sitter-get-textobj "function.outer"))
+    (define-key evil-inner-text-objects-map "F" (evil-textobj-tree-sitter-get-textobj "call.inner"))
+    (define-key evil-outer-text-objects-map "F" (evil-textobj-tree-sitter-get-textobj "call.outer"))
+    (define-key evil-inner-text-objects-map "C" (evil-textobj-tree-sitter-get-textobj "class.inner"))
+    (define-key evil-outer-text-objects-map "C" (evil-textobj-tree-sitter-get-textobj "class.outer"))
+    (define-key evil-outer-text-objects-map "c" (evil-textobj-tree-sitter-get-textobj "comment.outer"))
+    (define-key evil-inner-text-objects-map "v" (evil-textobj-tree-sitter-get-textobj "conditional.inner"))
+    (define-key evil-outer-text-objects-map "v" (evil-textobj-tree-sitter-get-textobj "conditional.outer"))
+    (define-key evil-inner-text-objects-map "l" (evil-textobj-tree-sitter-get-textobj "loop.inner"))
+    (define-key evil-outer-text-objects-map "l" (evil-textobj-tree-sitter-get-textobj "loop.outer"))
+    (define-key evil-inner-text-objects-map "a" (evil-textobj-tree-sitter-get-textobj ("parameter.inner" "call.inner")))
+    (define-key evil-outer-text-objects-map "a" (evil-textobj-tree-sitter-get-textobj ("parameter.outer" "call.outer"))))
 
   ;; Dynamically registers named interactive commands for bracket goto.
   (defun ar/ts-register-goto (key node &optional previous)
@@ -437,37 +438,37 @@ the plain-list/Makefile machinery."
 ;; "c s" leader entry resolves before the first tree-sitter buffer opens.
 (with-eval-after-load 'transient
   (with-no-warnings
-  (defun ar/ast-refactor-title ()
-    "Return the titled heading for the AST refactor transient."
-    (concat
-     (if (fboundp 'nerd-icons-codicon)
-         (nerd-icons-codicon "nf-cod-symbol_structure" :face 'transient-heading :v-adjust 0.02)
-       "")
-     (propertize " AST Refactor" 'face 'transient-heading)))
+    (defun ar/ast-refactor-title ()
+      "Return the titled heading for the AST refactor transient."
+      (concat
+       (if (fboundp 'nerd-icons-codicon)
+           (nerd-icons-codicon "nf-cod-symbol_structure" :face 'transient-heading :v-adjust 0.02)
+         "")
+       (propertize " AST Refactor" 'face 'transient-heading)))
 
-  (transient-define-prefix ar/ast-refactor-transient ()
-    "AST Structural Refactoring"
-    [:description ar/ast-refactor-title
-     ["Drag & Swap"
-      ("j" "Drag Down" evil-ts-obj-drag-down :transient t)
-      ("k" "Drag Up" evil-ts-obj-drag-up :transient t)
-      ("J" "Swap Down" evil-ts-obj-swap-dwim-down :transient t)
-      ("K" "Swap Up" evil-ts-obj-swap-dwim-up :transient t)]
-     ["Extract & Inject"
-      ("l" "Extract Out" evil-ts-obj-extract-down-dwim :transient t)
-      ("h" "Extract In" evil-ts-obj-extract-up-dwim :transient t)
-      ("s" "Inject Down" evil-ts-obj-inject-down-dwim :transient t)
-      ("S" "Inject Up" evil-ts-obj-inject-up-dwim :transient t)]
-     ["Mutate"
-      ("r" "Raise" evil-ts-obj-raise-dwim :transient t)
-      ("c" "Clone After" evil-ts-obj-clone-after-dwim :transient t)
-      ("C" "Clone Before" evil-ts-obj-clone-before-dwim :transient t)
-      (">" "Slurp" evil-ts-obj-slurp :transient t)
-      ("<" "Barf" evil-ts-obj-barf :transient t)
-      ("<escape>" "" transient-quit-one :format " ")]])
+    (transient-define-prefix ar/ast-refactor-transient ()
+      "AST Structural Refactoring"
+      [:description ar/ast-refactor-title
+                    ["Drag & Swap"
+                     ("j" "Drag Down" evil-ts-obj-drag-down :transient t)
+                     ("k" "Drag Up" evil-ts-obj-drag-up :transient t)
+                     ("J" "Swap Down" evil-ts-obj-swap-dwim-down :transient t)
+                     ("K" "Swap Up" evil-ts-obj-swap-dwim-up :transient t)]
+                    ["Extract & Inject"
+                     ("l" "Extract Out" evil-ts-obj-extract-down-dwim :transient t)
+                     ("h" "Extract In" evil-ts-obj-extract-up-dwim :transient t)
+                     ("s" "Inject Down" evil-ts-obj-inject-down-dwim :transient t)
+                     ("S" "Inject Up" evil-ts-obj-inject-up-dwim :transient t)]
+                    ["Mutate"
+                     ("r" "Raise" evil-ts-obj-raise-dwim :transient t)
+                     ("c" "Clone After" evil-ts-obj-clone-after-dwim :transient t)
+                     ("C" "Clone Before" evil-ts-obj-clone-before-dwim :transient t)
+                     (">" "Slurp" evil-ts-obj-slurp :transient t)
+                     ("<" "Barf" evil-ts-obj-barf :transient t)
+                     ("<escape>" "" transient-quit-one :format " ")]])
 
-  (ar/global-leader
-    "c s" '(ar/ast-refactor-transient :wk "Structure refactor"))))
+    (ar/global-leader
+      "c s" '(ar/ast-refactor-transient :wk "Structure refactor"))))
 
 ;; Exposes the Emacs 30 `treesit-thing' API as bracket motions (no-op
 ;; outside ts modes).
@@ -527,7 +528,7 @@ the plain-list/Makefile machinery."
              avy-kill-ring-save-region
              avy-pop-mark)
   :bind (:map isearch-mode-map
-         ("M-j" . avy-isearch))
+              ("M-j" . avy-isearch))
   :custom
   (avy-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
   (avy-style 'at-full)
@@ -771,8 +772,8 @@ tramp ssh json yaml toml lsp dap ast"
   (setf (alist-get 'org-mode jinx-exclude-faces)
         (append (alist-get 'org-mode jinx-exclude-faces)
                 '(org-level-1 org-level-2 org-level-3 org-level-4
-                  org-level-5 org-level-6 org-level-7 org-level-8
-                  org-document-title org-document-info org-priority)))
+                              org-level-5 org-level-6 org-level-7 org-level-8
+                              org-document-title org-document-info org-priority)))
   (define-advice jinx--on (:before-while () guard-disabled-modes)
     (not (apply #'derived-mode-p ar/jinx-disabled-modes))))
 

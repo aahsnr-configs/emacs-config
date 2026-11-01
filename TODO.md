@@ -1,0 +1,1 @@
+- [ ] Remove eshell popup window entirely.
